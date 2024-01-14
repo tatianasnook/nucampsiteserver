@@ -51,6 +51,16 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
     res.json({success: true, token: token, status: 'You are successfully logged in!'});
 });
 
+router.get('/', authenticate.verifyUser, authenticate.verifyAdmin, function(req, res, next) {
+    User.find({})
+        .then(users => {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(users);
+        })
+        .catch(err => next(err));
+});
+
 router.get('/logout', (req, res, next) => {
     if (req.session) {
         req.session.destroy();
